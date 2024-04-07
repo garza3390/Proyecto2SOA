@@ -12,7 +12,11 @@ const mainController = new MainController();
 
 // Servir archivos estáticos CSS y JavaScript cuando se solicite el archivo HTML principal
 app.get('/', mainController.getIndex.bind(mainController));
-app.get("/login", mainController.getLogin.bind(mainController));
+app.get("/menu", mainController.getMenu.bind(mainController));
+app.get("/recomendation", mainController.getRecomendation.bind(mainController));
+app.get("/reservations", mainController.getReservation.bind(mainController));
+app.get("/feedback", mainController.getFeedback.bind(mainController));
+
 
 
 
