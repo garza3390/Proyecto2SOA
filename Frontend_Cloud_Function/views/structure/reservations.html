@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservaciones</title>
+  <style>
+
+  </style>
+</head>
+<body>
+    <h2>Reservación</h2>
+    <form id="reservacion-form">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre">
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" name="fecha">
+        <label for="hora">Hora:</label>
+        <input type="time" id="hora" name="hora">
+        <button type="submit">Reservar</button>
+    </form>
+
+    <a href="/frontend-function/feedback"><button>Feedback</button></a>
+
+    <script>
+        document.getElementById("reservacion-form").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+            
+        var nombre = document.getElementById("nombre").value;
+        var fecha = document.getElementById("fecha").value;
+        var hora = document.getElementById("hora").value;
+            
+        // Aquí podrías enviar la información de la reserva a través de AJAX o cualquier otro método
+            
+        alert("¡Gracias por tu reserva, " + nombre + "! Hemos reservado una mesa para el " + fecha + " a las " + hora + ".");
+        });
+    </script>
+</body>
+</html>
+

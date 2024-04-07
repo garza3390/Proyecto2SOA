@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú Interactivo</title>
+  <style>
+
+  </style>
+</head>
+<body>
+    
+    <h2>Recomendación del Chef</h2>
+    <p id="recomendacion"></p>
+
+    <a href="/frontend-function/reservations"><button>Reservaciones</button></a>
+    <script>
+        function recomendarPlato() {
+        var platos = [
+            "Pizza",
+            "Lasaña",
+            "Pechuga de Pollo a la Parrilla",
+            "Tiramisú",
+            "Bruschetta",
+            "Risotto de Champiñones",
+            "Helado de Vainilla",
+            "Pastel de Chocolate"
+        ];
+        var randomIndex = Math.floor(Math.random() * platos.length);
+        return platos[randomIndex];
+        }
+        
+        // Mostrar la recomendación del chef
+        document.getElementById("recomendacion").innerText = "Recomendación del Chef: " + recomendarPlato();
+      
+    </script>
+</body>
+</html>
+
