@@ -1,20 +1,70 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Feedback</title>
   <style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 600px;
+    margin: 50px auto;
+    text-align: center;
+  }
+
+  #emoji-display {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+
+  #generate-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  #generate-button:hover {
+    background-color: #0056b3;
+  }
 
   </style>
 </head>
 <body>
-    
-    feedback
+  <div class="container">
+    <h1>Los emojis se generan aleatoriamente al precionar el boton</h1>
+    <input placeholder="DAR SU OPINION SOBRE EL RESTAURANTE">
+    <div id="emoji-display">😊</div>
+    <button id="generate-button">Generar Emoji</button>
+  </div>
+  <script>
+    // Array de emojis disponibles
+    const emojis = ['😀', '😂', '😍', '🥳', '🎉', '🤩', '😎', '🤓', '😜', '😇'];
 
-    <script>
-        
-    </script>
+    // Función para generar un emoji aleatorio
+    function generarEmoji() {
+      const randomIndex = Math.floor(Math.random() * emojis.length);
+      return emojis[randomIndex];
+    }
+
+    // Función para mostrar el emoji generado en la página
+    function mostrarEmoji() {
+      const emojiDisplay = document.getElementById('emoji-display');
+      emojiDisplay.textContent = generarEmoji();
+    }
+
+    // Obtener el botón y añadir un event listener para generar y mostrar el emoji al hacer clic
+    const generateButton = document.getElementById('generate-button');
+    generateButton.addEventListener('click', mostrarEmoji);
+  </script>
 </body>
 </html>
-
