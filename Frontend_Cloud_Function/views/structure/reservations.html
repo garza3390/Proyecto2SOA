@@ -89,97 +89,85 @@
   <a href="/frontend-function/">Volver al inicio</a>
 
   <script>
-    // Definir la URL de la API
-    var apiUrl = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-hour-function`;
-
-    // Obtener el elemento select para los horarios
-    var selectHora = document.getElementById("hora");
-
-    // Función para agregar opciones de hora al elemento select
-    function agregarOpcionesHora(horarios) {
-      // Limpiar opciones actuales
-      selectHora.innerHTML = "";
-
-      // Crear y agregar opciones para cada horario
-      horarios.forEach(function(horario) {
-        var option = document.createElement("option");
-        option.text = horario;
-        option.value = horario;
-        selectHora.add(option);
-      });
-    }
-
-    // Agregar un evento de cambio al campo de fecha
-    document.getElementById("fecha").addEventListener("change", function() {
-      // Obtener la fecha seleccionada
-      var fechaSeleccionada = new Date(this.value);
-
-      // Obtener el día de la semana para la fecha seleccionada
-      var diaSemana = fechaSeleccionada.toLocaleDateString("es-ES", { weekday: "long" }).toLowerCase();
-
-      // Realizar una solicitud GET a la API para obtener los horarios disponibles
-      fetch(apiUrl)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('La solicitud no se pudo completar correctamente');
-          }
-          return response.json(); // Parsea la respuesta JSON si la hay
-        })
-        .then(data => {
-          // Verificar si hay horarios disponibles para el día seleccionado
-          if (data.hasOwnProperty(diaSemana)) {
-            var horarios = data[diaSemana];
-            agregarOpcionesHora(horarios);
-          } else {
-            // Si no hay horarios disponibles, mostrar un mensaje o tomar otra acción
-            alert("No hay horarios disponibles para el día seleccionado.");
-          }
-        })
-        .catch(error => {
-          console.error('Error en la solicitud:', error);
+    document.addEventListener("DOMContentLoaded", function() {
+      const apiUrl = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-hour-function`;
+      const selectHora = document.getElementById("hora");
+  
+      function agregarOpcionesHora(horarios) {
+        selectHora.innerHTML = ""; // Limpiar opciones actuales
+        horarios.forEach(horario => {
+          const option = new Option(horario, horario);
+          selectHora.add(option);
         });
-    });
-
-    // Agregar opciones de hora para la fecha inicial (hoy)
-    document.getElementById("fecha").dispatchEvent(new Event('change'));
-
-    // Manejar el envío del formulario de reservación
-    document.getElementById("reservacion-form").addEventListener("submit", function(event) {
-      event.preventDefault(); // Prevenir el envío por defecto del formulario
-
-      // Obtener los datos del formulario
-      var nombre = document.getElementById("nombre").value;
-      var fecha = document.getElementById("fecha").value;
-      var hora = document.getElementById("hora").value;
-
-      // Construir el cuerpo de la solicitud
-      var requestBody = {
-        action: "reservar",
-        dia: fecha,
-        hora: hora
-      };
-
-      // Realizar la solicitud PUT a la API
-      fetch(apiUrl, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(requestBody)
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('La solicitud no se pudo completar correctamente');
-        }
-        return response.json(); // Parsea la respuesta JSON si la hay
-      })
-      .then(data => {
-        console.log('Respuesta de la API:', data);
-      })
-      .catch(error => {
-        console.error('Error en la solicitud:', error);
+      }
+  
+      function obtenerDiaSemana(fecha) {
+        const diasSemana = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+        return diasSemana[new Date(fecha).getDay()];
+      }
+  
+      function obtenerHorariosDisponibles(fecha) {
+        const diaSemana = obtenerDiaSemana(fecha);
+        fetch(apiUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('La solicitud no se pudo completar correctamente');
+            }
+            return response.json(); // Parsea la respuesta JSON si la hay
+          })
+          .then(data => {
+            if (data.hasOwnProperty(diaSemana)) {
+              const horarios = data[diaSemana];
+              agregarOpcionesHora(horarios);
+            } else {
+              alert("No hay horarios disponibles para el día seleccionado.");
+            }
+          })
+          .catch(error => {
+            console.error('Error en la solicitud:', error);
+          });
+      }
+  
+      document.getElementById("fecha").addEventListener("change", function() {
+        const fechaSeleccionada = this.value;
+        obtenerHorariosDisponibles(fechaSeleccionada);
+      });
+  
+      // Al cargar la página, obtener los horarios disponibles para la fecha inicial (hoy)
+      document.getElementById("fecha").dispatchEvent(new Event('change'));
+  
+      document.getElementById("reservacion-form").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevenir el envío por defecto del formulario
+        const nombre = document.getElementById("nombre").value;
+        const fecha = document.getElementById("fecha").value;
+        const hora = document.getElementById("hora").value;
+        const requestBody = {
+          action: "reservar",
+          dia: fecha,
+          hora: hora
+        };
+        fetch(apiUrl, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestBody)
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('La solicitud no se pudo completar correctamente');
+            }
+            return response.json(); // Parsea la respuesta JSON si la hay
+          })
+          .then(data => {
+            console.log('Respuesta de la API:', data);
+          })
+          .catch(error => {
+            console.error('Error en la solicitud:', error);
+          });
       });
     });
   </script>
+  
 </body>
 </html>
