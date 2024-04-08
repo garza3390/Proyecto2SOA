@@ -29,13 +29,22 @@
         const value1 = document.getElementById("value1Input").value;
         const value2 = document.getElementById("value2Input").value;
         
-        const apiUrl = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-function2?value1=${value1}&value2=${value2}`;
+        let apiUrl;
+
+        // Decide qué URL de la API utilizar basándose en si value2 está vacío o no
+        if (value2.trim() !== "") {
+            apiUrl = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-function2?value1=${value1}&value2=${value2}`;
+        } else {
+            apiUrl = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-function?type=maindishes&value=${value1}`;
+        }
+
+        // Limpiar los campos después de hacer la consulta
+        document.getElementById("value1Input").value = "";
+        document.getElementById("value2Input").value = "";
 
         fetch(apiUrl)
             .then(response => {
                 if (!response.ok) {
-                    const resultadoTexto = document.getElementById("resultadoTexto");
-                    resultadoTexto.textContent = "Error al obtener los datos";
                     throw new Error('Error al obtener los datos');
                 }
                 return response.json();
@@ -51,17 +60,17 @@
                 resultadoTexto.textContent = error;
                 console.error('Error:', error);
             });
-    }
+        }
 
-    function mostrarRespuesta(data) {
-        const resultadoTexto = document.getElementById("resultadoTexto");
-        resultadoTexto.textContent = ""; // Limpiar el texto por defecto
-        
-        // Crear un texto con los datos recibidos de la API
-        const textoResultado = `Plato Principal: ${data['Plato Principal']}, Bebida: ${data['Bebida']}, Postre: ${data['Postre']}`;
-        
-        resultadoTexto.textContent = textoResultado;
-    }
+        function mostrarRespuesta(data) {
+            const resultadoTexto = document.getElementById("resultadoTexto");
+            resultadoTexto.textContent = ""; // Limpiar el texto por defecto
+            
+            // Crear un texto con los datos recibidos de la API
+            const textoResultado = `Plato Principal: ${data['Plato Principal']}, Bebida: ${data['Bebida']}, Postre: ${data['Postre']}`;
+            
+            resultadoTexto.textContent = textoResultado;
+        }
     </script>
 </body>
 </html>
