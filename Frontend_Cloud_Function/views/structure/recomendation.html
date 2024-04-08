@@ -4,36 +4,64 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menú Interactivo</title>
-  <style>
-
-  </style>
 </head>
 <body>
-    
-    <h2>Recomendación del Chef</h2>
-    <p id="recomendacion"></p>
+    <div>
+        <a href="/frontend-function/reservations"><button>Reservaciones</button></a>
+    </div>
 
-    <a href="/frontend-function/reservations"><button>Reservaciones</button></a>
+    <br>
+
+    <h2>Value 1</h2>
+    <input id="value1Input" placeholder="pizza">
+
+    <h2>Value 2</h2>
+    <input id="value2Input" placeholder="fresca">
+
+    <button onclick="obtenerRecomendacion()">Obtener Recomendación</button>
+
+    <div id="respuesta">
+    <p id="resultadoTexto">Aquí se mostrará la recomendación.</p>
+    </div>
+
     <script>
-        function recomendarPlato() {
-        var platos = [
-            "Pizza",
-            "Lasaña",
-            "Pechuga de Pollo a la Parrilla",
-            "Tiramisú",
-            "Bruschetta",
-            "Risotto de Champiñones",
-            "Helado de Vainilla",
-            "Pastel de Chocolate"
-        ];
-        var randomIndex = Math.floor(Math.random() * platos.length);
-        return platos[randomIndex];
-        }
+        function obtenerRecomendacion() {
+        const value1 = document.getElementById("value1Input").value;
+        const value2 = document.getElementById("value2Input").value;
         
-        // Mostrar la recomendación del chef
-        document.getElementById("recomendacion").innerText = "Recomendación del Chef: " + recomendarPlato();
-      
+        const apiUrl = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-function2?value1=${value1}&value2=${value2}`;
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    const resultadoTexto = document.getElementById("resultadoTexto");
+                    resultadoTexto.textContent = "Error al obtener los datos";
+                    throw new Error('Error al obtener los datos');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Manipula los datos recibidos de la API
+                console.log('Respuesta de la API:', data);
+                // Muestra la respuesta en el elemento HTML
+                mostrarRespuesta(data);
+            })
+            .catch(error => {
+                const resultadoTexto = document.getElementById("resultadoTexto");
+                resultadoTexto.textContent = error;
+                console.error('Error:', error);
+            });
+    }
+
+    function mostrarRespuesta(data) {
+        const resultadoTexto = document.getElementById("resultadoTexto");
+        resultadoTexto.textContent = ""; // Limpiar el texto por defecto
+        
+        // Crear un texto con los datos recibidos de la API
+        const textoResultado = `Plato Principal: ${data['Plato Principal']}, Bebida: ${data['Bebida']}, Postre: ${data['Postre']}`;
+        
+        resultadoTexto.textContent = textoResultado;
+    }
     </script>
 </body>
 </html>
-
