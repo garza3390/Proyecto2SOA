@@ -134,7 +134,8 @@
       });
   
       // Al cargar la página, obtener los horarios disponibles para la fecha inicial (hoy)
-      document.getElementById("fecha").dispatchEvent(new Event('change'));
+      const fechaHoy = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en el formato "yyyy-mm-dd"
+      obtenerHorariosDisponibles(fechaHoy);
   
       document.getElementById("reservacion-form").addEventListener("submit", function(event) {
         event.preventDefault(); // Prevenir el envío por defecto del formulario
@@ -168,6 +169,7 @@
       });
     });
   </script>
+  
   
 </body>
 </html>
