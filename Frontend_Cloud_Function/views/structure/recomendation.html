@@ -10,6 +10,9 @@
       margin: 0;
       padding: 0;
       background-color: #f5f5f5;
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
     }
 
     .container {
@@ -68,49 +71,71 @@
     a:hover {
       text-decoration: underline;
     }
+
+    td {
+      text-align: center;
+      margin: 0 10px; /* Agrega margen horizontal */
+    }
+    
+    .centrar{
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div>
-        <h2>Value 1</h2>
-        <input id="value1Input" placeholder="Pizza">
+    <table> <!-- Agrega una tabla para organizar los campos -->
+      <tr> <!-- Agrega una fila para los campos 1 -->
+        <td> <!-- Agrega una celda para los campos 1 -->
+          <h2>Value 1</h2>
+          <input id="value1Input" placeholder="pizza">
 
-        <h2>Value 2</h2>
-        <input id="value2Input" placeholder="Fresca">
-    </div>
+          <h2>Value 2</h2>
+          <input id="value2Input" placeholder="fresca">
+
+          <div id="respuesta" class="centrar">
+            <button onclick="obtenerRecomendacion_2_values()">Obtener Recomendación</button>
+          </div>
+        </td>
+        
+        <td> <!-- Agrega una celda para los campos 2 -->
+          <h2>type</h2>
+          <input id="typeInput" placeholder="maindishes">
+
+          <h2>Value</h2>
+          <input id="valueInput" placeholder="pizza">
+
+          <div id="respuesta" class="centrar">
+            <button onclick="obtenerRecomendacion_type_value()">Obtener Recomendación</button>
+          </div>
+        </td>
+      </tr>
+    </table>
+
     
-    <br>
-    <div id="respuesta">
-        <button onclick="obtenerRecomendacion()">Obtener Recomendación</button>
-        <p id="resultadoTexto">Aquí se mostrará la recomendación.</p>
+
+    <div class="centrar">
+      <p id="resultadoTexto">Aquí se mostrará la recomendación.</p>
     </div>
 
     <br>
     
     <div>
-        <a href="/frontend-function/reservations">Reservaciones</a>
-        <a href="/frontend-function/">Volver al inicio</a>
-      </div>
+      <a href="/frontend-function/reservations">Reservaciones</a>
+      <a href="/frontend-function/">Volver al inicio</a>
+    </div>
   </div>
 
   <script>
-    function obtenerRecomendacion() {
+    function obtenerRecomendacion_2_values() {
       const value1 = document.getElementById("value1Input").value;
       const value2 = document.getElementById("value2Input").value;
-
-      let apiUrl;
-
-      if (value2.trim() !== "") {
-        apiUrl = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-function2?value1=${value1}&value2=${value2}`;
-      } else {
-        apiUrl = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-function2?type=maindishes&value=${value1}`;
-      }
-
-      document.getElementById("value1Input").value = "";
-      document.getElementById("value2Input").value = "";
-
-      fetch(apiUrl)
+    
+      let apiUrl_2_values = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-function2?value1=${value1}&value2=${value2}`;
+    
+      fetch(apiUrl_2_values)
         .then(response => {
           if (!response.ok) {
             throw new Error('Error al obtener los datos');
@@ -125,6 +150,35 @@
           resultadoTexto.textContent = error;
           console.error('Error:', error);
         });
+      
+      document.getElementById("value1Input").value = "";
+      document.getElementById("value2Input").value = "";
+    }
+
+    function obtenerRecomendacion_type_value() {
+      const value = document.getElementById("valueInput").value;
+      const type = document.getElementById("typeInput").value;    
+
+      let apiUrl_type_value = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-function?type=${type}&value=${value}`;    
+
+      fetch(apiUrl_type_value)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error al obtener los datos');
+          }
+          return response.json();
+        })
+        .then(data => {
+          mostrarRespuesta(data);
+        })
+        .catch(error => {
+          const resultadoTexto = document.getElementById("resultadoTexto");
+          resultadoTexto.textContent = error;
+          console.error('Error:', error);
+        });
+
+      document.getElementById("typeInput").value = "";
+      document.getElementById("valueInput").value = "";
     }
 
     function mostrarRespuesta(data) {
