@@ -94,8 +94,6 @@
       </div>
   </div>
 
-  
-
   <script>
     function obtenerRecomendacion() {
       const value1 = document.getElementById("value1Input").value;
@@ -103,14 +101,12 @@
 
       let apiUrl;
 
-      // Decide qué URL de la API utilizar basándose en si value2 está vacío o no
       if (value2.trim() !== "") {
         apiUrl = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-function2?value1=${value1}&value2=${value2}`;
       } else {
-        apiUrl = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-function?type=maindishes&value=${value1}`;
+        apiUrl = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-function2?type=maindishes&value=${value1}`;
       }
 
-      // Limpiar los campos después de hacer la consulta
       document.getElementById("value1Input").value = "";
       document.getElementById("value2Input").value = "";
 
@@ -122,9 +118,6 @@
           return response.json();
         })
         .then(data => {
-          // Manipula los datos recibidos de la API
-          console.log('Respuesta de la API:', data);
-          // Muestra la respuesta en el elemento HTML
           mostrarRespuesta(data);
         })
         .catch(error => {
@@ -138,8 +131,11 @@
       const resultadoTexto = document.getElementById("resultadoTexto");
       resultadoTexto.textContent = ""; // Limpiar el texto por defecto
 
-      // Crear un texto con los datos recibidos de la API
-      const textoResultado = `Plato Principal: ${data['Plato Principal']}, Bebida: ${data['Bebida']}, Postre: ${data['Postre']}`;
+      const platoPrincipal = data['Plato Principal'];
+      const bebida = data['Bebida'];
+      const postre = data['Postre'];
+
+      const textoResultado = `Plato Principal: ${platoPrincipal}, Bebida: ${bebida}, Postre: ${postre}`;
 
       resultadoTexto.textContent = textoResultado;
     }
