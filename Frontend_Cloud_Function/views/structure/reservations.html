@@ -31,6 +31,15 @@
       margin-bottom: 10px;
     }
 
+    input[type="text"] {
+      width: 95%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
     select {
       width: 100%;
       padding: 10px;
@@ -72,6 +81,9 @@
 <body>
   <h2>Reservación</h2>
   <form id="reservacion-form">
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" name="nombre" placeholder="Nombre de quien reserva">
+
     <label for="dia">Día:</label>
     <select id="dia" name="dia">
       <!-- Opciones de día se agregarán aquí con JavaScript -->
@@ -103,8 +115,11 @@
       function agregarOpcionesHora(horarios) {
         selectHora.innerHTML = ""; // Limpiar opciones actuales
         horarios.forEach(horario => {
-          const option = new Option(horario, horario);
-          selectHora.add(option);
+          const hora = Object.keys(horario)[0];
+          if (horario[hora] === "") {
+            const option = new Option(hora, hora);
+            selectHora.add(option);
+          }
         });
       }
 
@@ -151,9 +166,11 @@
         event.preventDefault(); // Prevenir el envío por defecto del formulario
         const dia = document.getElementById("dia").value;
         const hora = document.getElementById("hora").value;
+        const nombre = document.getElementById("nombre").value;
         const requestBody = {
           dia: dia,
-          hora: hora
+          hora: hora,
+          nombre: nombre
         };
         fetch(apiUrl, {
             method: "POST", // Cambiado a POST

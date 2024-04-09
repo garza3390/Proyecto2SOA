@@ -19,6 +19,7 @@
       background-color: #fff;
       border-radius: 10px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      text-align: center; /* Alineación centrada del contenido */
     }
 
     h1, h2 {
@@ -55,46 +56,40 @@
     button:hover {
       background-color: #0056b3;
     }
+
+    /* Estilos para el contenedor del enlace */
+    #link-container {
+      margin-top: 20px; /* Espacio entre el enlace y los demás elementos */
+    }
   </style>
 </head>
 <body>
   <div id="menu-container">
     <h1>Menú del Restaurante</h1>
   
-  <div id="menu">
-    <h2>Entradas</h2>
-    <ul id="entradas">
-    </ul>
-  
-    <h2>Platos Principales</h2>
-    <ul id="platos_principales">
-    </ul>
-  
-    <h2>Postres</h2>
-    <ul id="postres">
-    </ul>
-  </div>
+    <div id="menu">
+      <h2>Entradas</h2>
+      <ul id="entradas">
+      </ul>
+    
+      <h2>Platos Principales</h2>
+      <ul id="platos_principales">
+      </ul>
+    
+      <h2>Postres</h2>
+      <ul id="postres">
+      </ul>
+    </div>
 
-    <a href="/frontend-function/recomendation"><button>Recomendación del chef</button></a>
-    <a href="/frontend-function/"><button>Volver al inicio</button></a>
+    <!-- Enlace envuelto en un contenedor adicional -->
+    <div id="link-container">
+      <a href="/frontend-function/recomendation"><button>Recomendación del chef</button></a>
+    </div>
+
+    <a href="/frontend-function/">Volver al inicio</a>
   </div>
 
   <script>
-    const menu_url = 'https://jsonplaceholder.typicode.com/users';
-
-    function get(url) {
-        return fetch(url)
-        .then((response) => {
-            if (!response.ok) {
-            throw new Error('Error al obtener los datos');
-            }
-            return response.json();
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            throw error;
-        });
-    }
     // Arrays de platos para cada categoría
     var entradas = [
       { nombre: "Pizza", precio: "$10" },
