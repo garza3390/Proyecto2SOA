@@ -31,15 +31,6 @@
       margin-bottom: 10px;
     }
 
-    input[type="text"] {
-      width: 95%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 16px;
-    }
-
     select {
       width: 100%;
       padding: 10px;
@@ -79,11 +70,8 @@
   </style>
 </head>
 <body>
-  <h2>Reservación</h2>
+  <h2>Reservación - Seleccione dia y hora para verificar que esté disponible</h2>
   <form id="reservacion-form">
-    <label for="nombre">Nombre:</label>
-    <input type="text" id="nombre" name="nombre" placeholder="Nombre de quien reserva">
-
     <label for="dia">Día:</label>
     <select id="dia" name="dia">
       <!-- Opciones de día se agregarán aquí con JavaScript -->
@@ -114,12 +102,9 @@
 
       function agregarOpcionesHora(horarios) {
         selectHora.innerHTML = ""; // Limpiar opciones actuales
-        horarios.forEach(horario => {
-          const hora = Object.keys(horario)[0];
-          if (horario[hora] === "") {
-            const option = new Option(hora, hora);
-            selectHora.add(option);
-          }
+        Object.entries(horarios).forEach(([hora, detalle]) => {
+          const option = new Option(hora, hora);
+          selectHora.add(option);
         });
       }
 
@@ -129,7 +114,7 @@
             if (!response.ok) {
               throw new Error('La solicitud no se pudo completar correctamente');
             }
-            return response.json(); // Parsea la respuesta JSON si la hay
+            return response.json();
           })
           .then(data => {
             const dias = Object.keys(data);
@@ -166,28 +151,27 @@
         event.preventDefault(); // Prevenir el envío por defecto del formulario
         const dia = document.getElementById("dia").value;
         const hora = document.getElementById("hora").value;
-        const nombre = document.getElementById("nombre").value;
-        const requestBody = {
-          dia: dia,
-          hora: hora,
-          nombre: nombre
-        };
-        fetch(apiUrl, {
-            method: "POST", // Cambiado a POST
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestBody)
-          })
+        
+        fetch(apiUrl)
           .then(response => {
             if (!response.ok) {
               throw new Error('La solicitud no se pudo completar correctamente');
             }
-            alert('¡Reservación realizada con éxito!');
+            return response.json(); 
+          })
+          .then(data => {
+            const horarios = data[dia];
+            const detalleHora = horarios[hora];
+            const mensaje = detalleHora.estado === 'disponible' ? 'El día y la hora seleccionados están disponibles.' : 'El día y la hora seleccionados están ocupados.';
+            alert(mensaje);
           })
           .catch(error => {
             console.error('Error en la solicitud:', error);
           });
+
+        document.getElementById("dia").value = "";
+        document.getElementById("hora").value = "";
+        
       });
     });
   </script>

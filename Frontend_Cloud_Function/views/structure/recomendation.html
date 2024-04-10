@@ -28,12 +28,11 @@
       margin-top: 20px;
     }
 
-    input[type="text"] {
-      width: calc(100% - 10px);
-      padding: 10px;
+    input {
+      width: 100%;
       margin-bottom: 10px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 50px;
       font-size: 16px;
     }
 
@@ -72,52 +71,81 @@
       text-decoration: underline;
     }
 
-    td {
-      text-align: center;
-      margin: 0 10px; /* Agrega margen horizontal */
-    }
-    
     .centrar{
       display: flex; 
       justify-content: center; 
       align-items: center;
     }
+
+    button.switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+      border: 2px solid #ccc;
+      border-radius: 30px;
+      background-color: #fff;
+      cursor: pointer;
+      outline: none;
+    }
+
+    button.switch:before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background-color: #007bff;
+      transition: transform 0.3s;
+    }
+
+    button.switch.checked:before {
+      transform: translateX(30px);
+    }
+
+    .checked button.switch:before {
+      transform: translateX(30px);
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <table> <!-- Agrega una tabla para organizar los campos -->
-      <tr> <!-- Agrega una fila para los campos 1 -->
-        <td> <!-- Agrega una celda para los campos 1 -->
-          <h2>Value 1</h2>
-          <input id="value1Input" placeholder="pizza">
-
-          <h2>Value 2</h2>
-          <input id="value2Input" placeholder="fresca">
-
-          <div id="respuesta" class="centrar">
-            <button onclick="obtenerRecomendacion_2_values()">Obtener Recomendación</button>
-          </div>
-        </td>
-        
-        <td> <!-- Agrega una celda para los campos 2 -->
-          <h2>type</h2>
-          <input id="typeInput" placeholder="maindishes">
-
-          <h2>Value</h2>
-          <input id="valueInput" placeholder="pizza">
-
-          <div id="respuesta" class="centrar">
-            <button onclick="obtenerRecomendacion_type_value()">Obtener Recomendación</button>
-          </div>
-        </td>
-      </tr>
-    </table>
-
-    
+    <div class="centrar">
+      <button class="switch" onclick="toggleSwitch(this)"></button>
+    </div>
 
     <div class="centrar">
-      <p id="resultadoTexto">Aquí se mostrará la recomendación.</p>
+      <div class="columna1" id="columna1"> 
+        <h2>Comida/Bebida 1</h2>
+        <input id="value1Input" placeholder="pizza">
+  
+        <h2>Comida/Bebida 2</h2>
+        <input id="value2Input" placeholder="fresca">
+  
+        <div id="respuesta" class="centrar">
+          <button onclick="obtenerRecomendacion_2_values()">Obtener Recomendación</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="centrar">
+      <div class="columna2" id="columna2" style="display: none;"> 
+        <h2>Tipo</h2>
+        <input id="typeInput" placeholder="maindishes - desserts - drinks">
+  
+        <h2>Comida/Bebida</h2>
+        <input id="valueInput" placeholder="pizza - fresca - tiramisu - ...">
+  
+        <div id="respuesta" class="centrar">
+          <button onclick="obtenerRecomendacion_type_value()">Obtener Recomendación</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="centrar">
+      <p id="resultadoTexto"> --- Aquí se mostrará la recomendación --- </p>
     </div>
 
     <br>
@@ -129,6 +157,24 @@
   </div>
 
   <script>
+    function toggleSwitch(button) {
+      const resultadoTexto = document.getElementById("resultadoTexto");
+      resultadoTexto.textContent = " --- Aquí se mostrará la recomendación --- ";
+
+      const columna1 = document.getElementById('columna1');
+      const columna2 = document.getElementById('columna2');
+
+      if (button.classList.contains('checked')) {
+        columna1.style.display = 'block';
+        columna2.style.display = 'none';
+      } else {
+        columna1.style.display = 'none';
+        columna2.style.display = 'block';
+      }
+
+      button.classList.toggle('checked');
+    }
+
     function obtenerRecomendacion_2_values() {
       const value1 = document.getElementById("value1Input").value;
       const value2 = document.getElementById("value2Input").value;
@@ -183,13 +229,13 @@
 
     function mostrarRespuesta(data) {
       const resultadoTexto = document.getElementById("resultadoTexto");
-      resultadoTexto.textContent = ""; // Limpiar el texto por defecto
+      resultadoTexto.textContent = ""; 
 
       const platoPrincipal = data['Plato Principal'];
       const bebida = data['Bebida'];
       const postre = data['Postre'];
 
-      const textoResultado = `Plato Principal: ${platoPrincipal}, Bebida: ${bebida}, Postre: ${postre}`;
+      const textoResultado = `*Plato Principal: ${platoPrincipal}   *Bebida: ${bebida}   *Postre: ${postre}`;
 
       resultadoTexto.textContent = textoResultado;
     }
