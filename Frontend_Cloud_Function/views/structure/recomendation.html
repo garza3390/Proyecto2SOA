@@ -184,6 +184,7 @@
       fetch(apiUrl_2_values)
         .then(response => {
           if (!response.ok) {
+            alert('Error al obtener los datos');
             throw new Error('Error al obtener los datos');
           }
           return response.json();
@@ -192,8 +193,7 @@
           mostrarRespuesta(data);
         })
         .catch(error => {
-          const resultadoTexto = document.getElementById("resultadoTexto");
-          resultadoTexto.textContent = error;
+          alert(error);
           console.error('Error:', error);
         });
       
@@ -210,6 +210,7 @@
       fetch(apiUrl_type_value)
         .then(response => {
           if (!response.ok) {
+            alert('Error al obtener los datos');
             throw new Error('Error al obtener los datos');
           }
           return response.json();
@@ -218,8 +219,7 @@
           mostrarRespuesta(data);
         })
         .catch(error => {
-          const resultadoTexto = document.getElementById("resultadoTexto");
-          resultadoTexto.textContent = error;
+          alert(error);
           console.error('Error:', error);
         });
 
