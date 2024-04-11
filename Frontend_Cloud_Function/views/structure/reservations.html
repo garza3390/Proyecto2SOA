@@ -5,36 +5,175 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reservaciones</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
 
+    h2 {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+    a {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: #007bff;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-    <h2>Reservación</h2>
-    <form id="reservacion-form">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre">
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" name="fecha">
-        <label for="hora">Hora:</label>
-        <input type="time" id="hora" name="hora">
-        <button type="submit">Reservar</button>
-    </form>
+  <h2>Reservación - Seleccione dia y hora para verificar que esté disponible</h2>
+  <form id="reservacion-form">
+    <label for="dia">Día:</label>
+    <select id="dia" name="dia">
+      <!-- Opciones de día se agregarán aquí con JavaScript -->
+    </select>
+    <label for="hora">Hora:</label>
+    <select id="hora" name="hora">
+      <!-- Opciones de hora se agregarán aquí con JavaScript -->
+    </select>
+    <button type="submit">Reservar</button>
+  </form>
 
-    <a href="/frontend-function/feedback"><button>Feedback</button></a>
+  <a href="/frontend-function/feedback">Feedback</a>
+  <a href="/frontend-function/">Volver al inicio</a>
 
-    <script>
-        document.getElementById("reservacion-form").addEventListener("submit", function(event) {
-        event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
-            
-        var nombre = document.getElementById("nombre").value;
-        var fecha = document.getElementById("fecha").value;
-        var hora = document.getElementById("hora").value;
-            
-        // Aquí podrías enviar la información de la reserva a través de AJAX o cualquier otro método
-            
-        alert("¡Gracias por tu reserva, " + nombre + "! Hemos reservado una mesa para el " + fecha + " a las " + hora + ".");
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const apiUrl = `https://us-central1-frontend-cloud-function.cloudfunctions.net/reccomendation-hour-function`;
+      const selectDia = document.getElementById("dia");
+      const selectHora = document.getElementById("hora");
+
+      function agregarOpcionesDia(dias) {
+        selectDia.innerHTML = ""; // Limpiar opciones actuales
+        dias.forEach(dia => {
+          const option = new Option(dia, dia);
+          selectDia.add(option);
         });
-    </script>
+      }
+
+      function agregarOpcionesHora(horarios) {
+        selectHora.innerHTML = ""; // Limpiar opciones actuales
+        Object.entries(horarios).forEach(([hora, detalle]) => {
+          const option = new Option(hora, hora);
+          selectHora.add(option);
+        });
+      }
+
+      function obtenerHorariosDisponibles() {
+        fetch(apiUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('La solicitud no se pudo completar correctamente');
+            }
+            return response.json();
+          })
+          .then(data => {
+            const dias = Object.keys(data);
+            agregarOpcionesDia(dias);
+            const primerDia = dias[0];
+            agregarOpcionesHora(data[primerDia]);
+          })
+          .catch(error => {
+            console.error('Error en la solicitud:', error);
+          });
+      }
+
+      document.getElementById("dia").addEventListener("change", function() {
+        const diaSeleccionado = this.value;
+        fetch(apiUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('La solicitud no se pudo completar correctamente');
+            }
+            return response.json(); 
+          })
+          .then(data => {
+            const horarios = data[diaSeleccionado];
+            agregarOpcionesHora(horarios);
+          })
+          .catch(error => {
+            console.error('Error en la solicitud:', error);
+          });
+      });
+
+      obtenerHorariosDisponibles();
+
+      document.getElementById("reservacion-form").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevenir el envío por defecto del formulario
+        const dia = document.getElementById("dia").value;
+        const hora = document.getElementById("hora").value;
+        
+        fetch(apiUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('La solicitud no se pudo completar correctamente');
+            }
+            return response.json(); 
+          })
+          .then(data => {
+            const horarios = data[dia];
+            const detalleHora = horarios[hora];
+            const mensaje = detalleHora.estado === 'disponible' ? 'El día y la hora seleccionados están disponibles.' : 'El día y la hora seleccionados están ocupados.';
+            alert(mensaje);
+          })
+          .catch(error => {
+            console.error('Error en la solicitud:', error);
+          });
+
+        document.getElementById("dia").value = "";
+        document.getElementById("hora").value = "";
+        
+      });
+    });
+  </script>
 </body>
 </html>
-
